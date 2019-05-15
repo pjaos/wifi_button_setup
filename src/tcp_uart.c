@@ -227,20 +227,17 @@ int init_uarts(bool uart0_enabled, bool uart1_enabled, bool uart2_enabled) {
 	memset(&bind_opts, 0, sizeof(bind_opts));
 
 	if( uart0_enabled ) {
-		rc = init_uart(0);
 		mg_bind_opt(mgos_get_mgr(), UART0_SERVER_STRING, uart_0_handler, NULL, bind_opts);
 	}
 
 	if( uart1_enabled ) {
 		if( !rc ) {
-			rc = init_uart(1);
 			mg_bind_opt(mgos_get_mgr(), UART1_SERVER_STRING, uart_1_handler, NULL, bind_opts);
 		}
 	}
 
 	if( uart2_enabled ) {
 		if( !rc ) {
-			rc = init_uart(2);
 			mg_bind_opt(mgos_get_mgr(), UART2_SERVER_STRING, uart_2_handler, NULL, bind_opts);
 		}
 	}
