@@ -244,3 +244,13 @@ int init_uarts(bool uart0_enabled, bool uart1_enabled, bool uart2_enabled) {
 
 	return rc;
 }
+
+
+
+/**
+ * @brief The mgos init function.
+ **/
+bool mgos_tcp_uart_init(void) {
+
+	return true;
+}
