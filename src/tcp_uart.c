@@ -77,7 +77,7 @@ static void uart_dispatcher(int uart_index, void *arg) {
  * @param stop_bits (  MGOS_UART_STOP_BITS_1 , MGOS_UART_STOP_BITS_2 or MGOS_UART_STOP_BITS_1_5)
  * @preturn 0 on success, -2 on failure.
  */
-int init_uart(int uart_index, int baud_rate, int data_bits, enum parity, enum stop_bits) {
+int init_uart(int uart_index, int baud_rate, int data_bits, int parity, int stop_bits) {
 	  struct mgos_uart_config ucfg;
 
 	  mgos_uart_config_set_defaults(uart_index, &ucfg);
