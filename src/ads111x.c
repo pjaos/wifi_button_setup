@@ -262,3 +262,11 @@ uint16_t get_adc_value(uint16_t device_address, uint8_t adc, uint8_t fs_voltage_
 
 	return adc_value;
 }
+
+/**
+ * @brief The mgos lin init function.
+ **/
+bool mgos_ads111x_init(void) {
+
+	return true;
+}
