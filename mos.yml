@@ -1,6 +1,6 @@
 author: Paul Austen <pausten.os@gmail.com>
 type: lib
-description: Y device are you there handler
+description: A driver for the ADS1113/ADS114 and ADS115 ADC's
 version: 1.0
 platforms: [ esp8266, esp32 ]
 
@@ -9,8 +9,14 @@ sources:
 includes:
   - include
 
+libs:
+    - origin: https://github.com/mongoose-os-libs/i2c
+
 config_schema:
-  - ["ydevayth", "o", {title: "Y device are you there handler"}]
+ - ["i2c.enable", "b", true, {title: "Enable I2C"}]
+ - ["i2c.unit_no", "i", 0, {title: "Which hardware unit to use, 0 or 1"}]
+ - ["i2c.sda_gpio", "i", 22, {title: "GPIO to use for SDA"}]
+ - ["i2c.scl_gpio", "i", 21, {title: "GPIO to use for SCL"}]
 
 tags:
   - c
