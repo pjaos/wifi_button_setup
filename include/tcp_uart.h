@@ -1,5 +1,5 @@
-#ifndef _UART
-#define _UART
+#ifndef _TCP_UART
+#define _TCP_UART
 
 #include "mgos.h"
 
