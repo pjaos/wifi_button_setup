@@ -30,7 +30,9 @@ The third serial port (1)  is reachable on TCP port 25.
 
 enum mgos_app_init_result mgos_app_init(void) {
 
+    //Setup UART 1
     init_uart(1, 9600, 8, MGOS_UART_PARITY_NONE, MGOS_UART_STOP_BITS_1);
+
     //Expose UART1 on TCP port 24
     init_uarts(false, true, false);
 
