@@ -471,7 +471,7 @@ static void captive_dns_ev_handler(struct mg_connection *c, int ev, void *ev_dat
 /*
  * @brief Perform WiFi init for generic wifi configuration.
  */
-void wifi_button_setup_init(void) {
+void mgos_wifi_button_setup_init(void) {
 
     struct mg_rpc *con = mgos_rpc_get_global();
 

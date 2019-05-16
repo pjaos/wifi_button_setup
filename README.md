@@ -21,7 +21,7 @@ network.
 
 ### API
 
-The wifi_button_setup_init() function is called automatically when the
+The mgos_wifi_button_setup_init() function is called automatically when the
 library is included in mos.yaml. However a product.html file should be added
 to your projects fs folder as this will be displayed in place of an index.html
 file when the WiFi is setup on your device.

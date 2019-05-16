@@ -18,7 +18,7 @@ enum {
 #define WIFI_MAX_BUTTON_HOLD_COUNT 5000/WIFI_TIMER_PERIOD_MS
 
 void setup_wifi_timer_cb(void *arg);
-void wifi_button_setup_init(void);
+void mgos_wifi_button_setup_init(void);
 void enableWiFiSetupMode(void);
 char *get_wifi_ap_ip_address(void);
 char *get_wifi_sta_ip_address(void);
