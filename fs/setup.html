@@ -1,0 +1,95 @@
+	<html>
+	<head>	
+	<link rel="stylesheet" type="text/css" href="thestyle.css">
+	<script src="zepto.min.js"></script>
+	</head>
+	<body onload="scanWifi()">
+	 <div class="container">
+	  <div class="hero">
+	  	
+			<div class="row form">
+				<h1>PRODUCT NAME</h1>
+		   </div>
+			<div class="row form">
+				<fieldset class="col c9">
+				<legend><h1>Setup WiFi</h1></legend>
+			      <div class="form-control">
+			         <label ></label>
+						<select id="apMode" size="1" >
+			  			<option value="term">Connect To Wifi Network</option>
+			  			<option value="ap">Create Wifi Network (AP)</option>
+			  			<option value="apterm">Create and Connect to Wifi Network (AP/Term)</option>
+						</select>      
+			      </div>
+			      
+			      <div class="form-control">
+			        <label for="ssid">WiFi SSID:</label>
+			        <!-- text field does not apply size in chrome not sure why -->
+			        <input type="search" class="smooth" id="ssid" name="ssid" size="40" placeholder="Type WiFi SSID/Network...">
+			      </div>
+		
+			      <div class="form-control">
+			        <label for="pass">WiFi Password:</label>
+			        <input type="password" class="smooth" id="pass" name="pass" size="40" placeholder="Type WiFi password...">
+			      </div>
+		
+			      <div class="form-control">
+			         <label ></label>
+						<input type="checkbox" id="showPassCB" value="">Show Password
+			      </div>
+			      
+			      <div class="form-control">
+				      <button href="#" class="btn btn-sm btn-b" id="save">Save WiFi settings</button>
+			      </div>
+				</fieldset>
+				
+			<fieldset class="col c9">
+			<legend><h1>Scan WiFi</h1></legend>
+					<div class="row form">
+						<div class="col c4">
+						  <label>SSID's</label>
+						  <select class="form-control" size="4" id="wifiNetworks" >
+						  </select>      
+						  <div class="form-control"><button href="#" class="btn btn-sm btn-a" id="scan">Scan WiFi Networks</button>
+						  </div>
+				      </div>
+				      
+						<div class="col c5">
+							<div class="row form">
+							<label>RSSI (dBm)</label>
+						   <input type="text" id=rssiField value="" size="5" readonly>
+						   </div>
+							<div class="row form">
+							<label>Channel</label>
+						   <input type="text" id=channelField value="" readonly>
+						   </div>
+							<div class="row form">
+							<label>Authorisation</label>
+						   <input type="text" id=authField value="" readonly>
+						   </div>
+	
+						  </div>
+				      </div>
+				      			      
+				  </div>
+			</fieldset>
+			
+	      </div>
+	</div>
+	
+	
+	
+	
+	</div>
+	
+	<div class="container">
+	    <div class="hero">
+	      <!-- <h3>Result:</h3> -->
+	      <div id="result"></div>
+	    </div>
+	</div>
+	  
+	<script src="setup.js"></script>
+	
+	</body>
+	</html>
