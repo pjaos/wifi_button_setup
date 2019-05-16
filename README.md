@@ -1,40 +1,38 @@
-# TCP UART
-Provide access to UARTs on ESP32/ESP8266 devices via a TCP connection.
+# WiFi button setup
+This lib allows ESP32 and ESP8266 product to configure the WiFi.
 
 ## Introduction
 
-The ~ESP32 and ESP8266 devices have serial ports
-ESP32
- 3 serial ports
-ESP8266
- 2 serial port. The second only has a TXD and is normally used for debugging.
-
+In order to use this library a GPI pin (typically GPI0 as an input) is connected to a
+push button switch to ground. Another GPIO pin (typically GPIO2) is connected
+to an LED through a resistor.
+In order to connect to the Wifi The push button must be held down until (about 5
+seconds) the LED flashes. The user can then connect to a WiFi network (the SSID
+of the WiFi network will start with the product name and the password will be
+12345678) via a mobile or tablet. Once the mobile of tablet is connected to the
+devices WiFi network they can open a browser to 192.168.4.1 or any
+url (E.G a.com) and the web page that will allow them to enter the WiFi
+SSID and password is displayed. A scan of WiFi networks is made and a button is
+display allowing the user to rescan Wifi networks. The WiFi signal level is
+displayed and the SSID of the loudest signal is selected however the user can
+select other SSIDs from a drop down list. Once the user has entered the WiFi
+password a button can be selected to connect the device to the users WiFi
+network.
 
 ### API
 
-The init_uart() function is called to set the serial port parameters for a
-single serial port.
-
-The init_uarts() function is called in order to expose one or more
-serial ports on TCP connections.
-
-The first serial port (0) is reachable on TCP port 23.
-The second serial port (1)  is reachable on TCP port 24.
-The third serial port (1)  is reachable on TCP port 25.
+The wifi_button_setup_init() function is called automatically when the
+library is included in mos.yaml. However a product.html file should be added
+to your projects fs folder as this will be displayed in place of an index.html
+file when the WiFi is setup on your device.
 
 ### Example Application
+No code is required as detailed above execpt that the library is included in mos.yml
 
 ```
 #include "mgos.h"
-#include "tcp_uart.h"
 
 enum mgos_app_init_result mgos_app_init(void) {
-
-    //Setup UART 1
-    init_uart(1, 9600, 8, MGOS_UART_PARITY_NONE, MGOS_UART_STOP_BITS_1);
-
-    //Expose UART1 on TCP port 24
-    init_uarts(false, true, false);
 
     return MGOS_APP_INIT_SUCCESS;
 }

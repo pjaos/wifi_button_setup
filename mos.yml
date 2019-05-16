@@ -1,6 +1,6 @@
 author: Paul Austen <pausten.os@gmail.com>
 type: lib
-description: A driver for the ADS1113/ADS114 and ADS115 ADC's
+description: WiFi setup via a single button and LED.
 version: 1.0
 platforms: [ esp8266, esp32 ]
 
@@ -10,13 +10,22 @@ includes:
   - include
 
 libs:
-    - origin: https://github.com/mongoose-os-libs/i2c
+  - origin: https://github.com/mongoose-os-libs/ca-bundle
+  - origin: https://github.com/mongoose-os-libs/http-server
+  - origin: https://github.com/mongoose-os-libs/rpc-common
+  - origin: https://github.com/mongoose-os-libs/rpc-service-config
+  - origin: https://github.com/mongoose-os-libs/rpc-service-fs
+  - origin: https://github.com/mongoose-os-libs/wifi
 
 config_schema:
- - ["i2c.enable", "b", true, {title: "Enable I2C"}]
- - ["i2c.unit_no", "i", 0, {title: "Which hardware unit to use, 0 or 1"}]
- - ["i2c.sda_gpio", "i", 22, {title: "GPIO to use for SDA"}]
- - ["i2c.scl_gpio", "i", 21, {title: "GPIO to use for SCL"}]
+ - ["platform", 					        "o", 	         {title: "Platform config. Defines connectivity of hardware."}]
+ - ["platform.wifi_button_gpio", 	"i", 0,        {title: "GPIO pin used to setup wifi (input from button)"}]
+ - ["platform.wifi_led_gpio", 		"i", 2,        {title: "GPIO pin used to setup wifi (output to LED)."}]
+
+ - ["user", 						          "o",           {title: "Holds attributes that the user may configure."}]
+ - ["user.setup_mode", 				    "i", 1,        {title: "If true then the unit is in setup mode. This occurs after the setup button has been held down for a time and released."}]
+ - ["user.wifi_mode", 				    "i", 0,        {title: "The wifi mode (WIFI_MODE_AP=0 or WIFI_MODE_TERMINAL=1)."}]
+ - ["user.product_id", 				    "s", "PRODID", {title: "The Y product ID."}]
 
 tags:
   - c
