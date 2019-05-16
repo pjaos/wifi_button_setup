@@ -18,6 +18,8 @@ libs:
   - origin: https://github.com/mongoose-os-libs/wifi
 
 config_schema:
+ - ["wifi.ap.enable",                                           "b", true, {title: "Enable WiFi AP"}]
+ - ["wifi.sta.enable",                                          "b", true, {title: "Enable WiFi station"}]
  - ["platform", 					        "o", 	         {title: "Platform config. Defines connectivity of hardware."}]
  - ["platform.wifi_button_gpio", 	"i", 0,        {title: "GPIO pin used to setup wifi (input from button)"}]
  - ["platform.wifi_led_gpio", 		"i", 2,        {title: "GPIO pin used to setup wifi (output to LED)."}]
