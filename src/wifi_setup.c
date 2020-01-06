@@ -1,8 +1,3 @@
-/*
- *  Created on: 2 Mar 2018
- *      Author: pja
- *  Responsible for control of GPIO pins.
- */
 #include "mgos.h"
 #include "mgos_ro_vars.h"
 #include "mgos_vfs.h"
@@ -15,23 +10,6 @@ static char sta_ip[16];
 static char ap_ip[16];
 
 static void wifi_scan_cb(int n, struct mgos_wifi_scan_result *res, void *arg);
-
-/*
- * To make scanning reliable had to add second LOG statement in mongoose os code.
- * I don't understand why this is but it was clear from testing that this had this effect.
- *
- * void mgos_wifi_dev_scan_cb(int num_res, struct mgos_wifi_scan_result *res) {
- * if (!s_scan_in_progress) return;
- * 	LOG(LL_INFO, ("WiFi scan done, num_res %d", num_res));
- * 	struct scan_result_info *ri =
- *     (struct scan_result_info *) calloc(1, sizeof(*ri));
- * 	ri->num_res = num_res;
- * 	ri->res = res;
- * 	s_scan_in_progress = false;
- * 	LOG(LL_INFO, ("PJA: scan_cb_cb=%p\n",(void *)scan_cb_cb) );
- * 	mgos_invoke_cb(scan_cb_cb, ri, false );
- * }
- */
 
 /**
  * @brief We use two GPIO pins for Wifi setup.
@@ -178,8 +156,6 @@ void setup_wifi_timer_cb(void *arg) {
         }
     }
 
-//LOG(LL_INFO, ("wifiStatus=%d, wifiLedState=%d\n",wifiStatus, wifiLedState) );
-
     //If in setup mode and the button has been held down long enough flash LED fast
     if( wifiLedState == WIFI_LED_OFF ) {
         set_wifi_led(false);
@@ -187,7 +163,6 @@ void setup_wifi_timer_cb(void *arg) {
     else if( wifiLedState == WIFI_LED_FLASH_FAST ) {
     	LOG(LL_INFO, ("Release switch to reset to factory defaults.\n") );
     	toggle_wifi_led();
-//PJA        mgos_gpio_toggle(mgos_sys_config_get_platform_wifi_led_gpio());
     }
     else if( wifiLedState == WIFI_LED_OFF_FLASH_ON ) {
         ledFlashCount++;
@@ -249,37 +224,47 @@ static void set_restart_ms(int milli_seconds) {
 }
 
 /**
+ * @brief Enable setup mode SSID. In setup mode the SSID starts with the
+ * product ID and ends with the MAC address.
+ **/
+static void setupModeSSID(void) {
+  const char *ssid_prefix = mgos_sys_config_get_user_product_id();
+  if( ssid_prefix == NULL ) {
+    ssid_prefix="UNSETPRODUCTID";
+  }
+  struct mg_str mac = mg_mk_str(mgos_sys_ro_vars_get_mac_address());
+  LOG(LL_INFO, ("-----------------------------------> mgos_sys_config_get_device_id: %s (mac: %.*s)",
+                 mgos_sys_config_get_device_id(), mac.len, mac.p));
+
+   //The default SSID will have a prefix of the product ID followed
+   //by the last three digits of the devices WiFi MAC address.
+   static char deafultSSID[33];
+   snprintf(deafultSSID, 32, "%s_%s", ssid_prefix, mac.p+6 );
+
+   //We want a default SSID starting with the product ID
+   mgos_sys_config.wifi.ap.enable=1;
+   mgos_sys_config.wifi.ap.ssid=deafultSSID;
+   mgos_sys_config.wifi.sta.enable=0;
+   mgos_sys_config.wifi.sta.ssid="";
+   mgos_sys_config.wifi.sta.pass="";
+
+   mgos_sys_config.user.setup_mode=1;
+   mgos_sys_config.user.wifi_mode=WIFI_MODE_AP_TERMINAL;
+
+   mgos_wifi_setup_ap(&mgos_sys_config.wifi.ap);
+   mgos_wifi_setup_sta(&mgos_sys_config.wifi.sta);
+
+   saveConfig();
+}
+
+/**
  * @brief Called to enter wifi setup mode.
  */
 void enableWiFiSetupMode(void) {
-	const char *ssid_prefix = mgos_sys_config_get_user_product_id();
-
-	LOG(LL_INFO, ("--------------------> PJA RESET USER CONFIG\n") );
-
-    struct mg_str mac = mg_mk_str(mgos_sys_ro_vars_get_mac_address());
-    LOG(LL_INFO, ("-----------------------------------> mgos_sys_config_get_device_id: %s (mac: %.*s)",
-                   mgos_sys_config_get_device_id(), mac.len, mac.p));
 
     mgos_config_reset(MGOS_CONFIG_LEVEL_USER);
 
-    //The default SSID will have a prefix of the product ID followed
-    //by the last three digits of the devices WiFi MAC address.
-    char deafultSSID[256];
-    sprintf(deafultSSID, "%s_%s", ssid_prefix, mac.p+6 );
-
-    //We want a default SSID starting with the product ID
-    mgos_sys_config.wifi.ap.enable=1;
-    mgos_sys_config.wifi.ap.ssid=deafultSSID;
-    mgos_sys_config.wifi.sta.enable=0;
-    mgos_sys_config.wifi.sta.ssid="";
-    mgos_sys_config.wifi.sta.pass="";
-
-    mgos_sys_config.user.setup_mode=1;
-    mgos_sys_config.user.wifi_mode=WIFI_MODE_AP;
-
-    mgos_wifi_setup_ap(&mgos_sys_config.wifi.ap);
-    mgos_wifi_setup_sta(&mgos_sys_config.wifi.sta);
-    saveConfig();
+    setupModeSSID();
 
     set_restart_ms(0);
 
@@ -383,15 +368,16 @@ static void mgos_rpc_wifi_setup_complete(struct mg_rpc_request_info *ri,
 static int wifi_scan_result_printer(struct json_out *out, va_list *ap) {
     int len = 0;
     int num_res = va_arg(*ap, int);
+    LOG(LL_INFO, ("%s: Networks found = %d", __FUNCTION__, num_res) );
 
-    const struct mgos_wifi_scan_result *res =
-        va_arg(*ap, const struct mgos_wifi_scan_result *);
+    const struct mgos_wifi_scan_result *res = va_arg(*ap, const struct mgos_wifi_scan_result *);
 
     for (int i = 0; i < num_res; i++) {
         if (i > 0) len += json_printf(out, ", ");
         len +=
             json_printf(out, "{ssid: %Q, auth: %d, channel: %d, rssi: %d}",
                         res[i].ssid, res[i].auth_mode, res[i].channel, res[i].rssi);
+        LOG(LL_INFO, ("SSID: %s, AUTH MODE: %d, CHNL: %d, RSSI: %d", res[i].ssid, res[i].auth_mode, res[i].channel, res[i].rssi) );
     }
 
     return len;
@@ -426,6 +412,7 @@ static void wifi_scan_cb(int n, struct mgos_wifi_scan_result *res, void *arg) {
 
     struct mg_rpc_request_info *ri = (struct mg_rpc_request_info *) arg;
 
+    LOG(LL_INFO, ("%s: n = %d", __FUNCTION__, n) );
     if (n < 0) {
         mg_rpc_send_errorf(ri, n, "wifi scan failed");
         return;
@@ -479,6 +466,10 @@ void mgos_wifi_button_setup_init(void) {
         struct mg_connection *c = mg_bind(mgos_get_mgr(), "udp://:53", captive_dns_ev_handler, 0);
         mg_set_protocol_dns(c);
         LOG(LL_INFO, ("CAPTIVE_DNS: enabled") );
+
+//Setting SSID here causes crash when SSID and password is entered.
+//Needs investigation.
+//        setupModeSSID();
     }
 
     init_gpio();
@@ -488,5 +479,10 @@ void mgos_wifi_button_setup_init(void) {
     mg_rpc_add_handler(con, "WiFi.Scan", "", mgos_rpc_wifi_scan_handler, NULL);
     mg_rpc_add_handler(con, "WiFi.SetupComplete", "", mgos_rpc_wifi_setup_complete, NULL);
     mgos_register_http_endpoint("/", root_handler, NULL);
+
+    //Note !!!
+    //On esp8266 board if this log message is not present then the init fails.
+    //Investigation required to determine the reason for this.
+    LOG(LL_INFO, ("%s: Complete", __FUNCTION__) );
 
 }

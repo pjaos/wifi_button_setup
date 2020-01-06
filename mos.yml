@@ -31,7 +31,7 @@ config_schema:
  - ["user", 						          "o",             {title: "Holds attributes that the user may configure."}]
  - ["user.setup_mode", 				    "i", 1,          {title: "If true then the unit is in setup mode. This occurs after the setup button has been held down for a time and released."}]
  - ["user.wifi_mode", 				    "i", 0,          {title: "The wifi mode (WIFI_MODE_AP=0 or WIFI_MODE_TERMINAL=1)."}]
- - ["user.product_id", 				    "s", "PRODID",   {title: "The Y product ID."}]
+ - ["user.product_id", 				    "s", "PRODID",   {title: "The Y product ID (before WiFi setup this is part of AP SSID)."}]
 
 tags:
   - c

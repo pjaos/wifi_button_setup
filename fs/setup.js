@@ -11,7 +11,7 @@
 	  var log = function(msg) {
 	  	$('<span/>').html(msg + '\n').appendTo('#result')
 	  };
-	  
+
 	  function updateSelectedNetwork() {
 	  	var selectedIndex = wifiNetworksListBox.selectedIndex;
 	  	if (selectedIndex > -1) {
@@ -40,10 +40,13 @@
 	  		url: '/rpc/WiFi.Scan',
 	  		data: "",
 	  		type: 'POST',
+				error: function(data) {
+					log('Scan failed');
+				},
 	  		success: function(data) {
 
 	  			if ("results" in data) {
-	  				log('Success.');
+	  				log('Success');
 	  				resultSetDict = data["results"];
 	  				rssList = [];
 	  				networkDict = {};
@@ -101,8 +104,8 @@
 	  				}
 
 	  				if( wifiNetworksListBox.length > 0 ) {
-						wifiNetworksListBox.selectedIndex=0;	 
-						log(""+wifiNetworksListBox.options[0].text+" SSID is the loudest."); 				
+						wifiNetworksListBox.selectedIndex=0;
+						log(""+wifiNetworksListBox.options[0].text+" SSID is the loudest.");
 	  				}
 					updateSelectedNetwork();
 	  			}
@@ -124,18 +127,14 @@
 	  });
 
 	  $('#save').on('click', function() {
-		if( $('#ssid').val().length < 8 ) {
-			alert("The WiFi SSID must be at least 8 characters long.");
-			return;
-		}
 		if( $('#pass').val().length < 8 ) {
 			if (confirm("Did you mean to leave the WiFi password field empty ?")) {
 			    // Ok proceed
 			} else {
 			    return;
 			}
-		}  	
-	  	
+		}
+
 	  	log('Saving WiFi settings ...');
 
 	  	var jsonStr = JSON.stringify({
@@ -211,13 +210,12 @@
 			  		success: function(data) {
 			  			log('Restarting ...');
 			  		}
-			  	});			
+			  	});
 	  		},
 
 	  	})
 	  });
 
-	  $('#scan').on('click', function() {
+		$('#scan').on('click', function() {
 	  	scanWifi();
-	  });		 
-	  
+	  });
