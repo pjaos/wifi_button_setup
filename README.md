@@ -33,19 +33,18 @@ The wifi parameters are not part of this li but are shown here for completness.
 ```
 config_schema:
  - ["wifi.ap.enable",             "b", true,       {title: "Enable WiFi AP"}]
- - ["wifi.sta.enable",            "b", true,       {title: "Enable WiFi station"}]
  - ["wifi.ap.pass",               "s", "12345678", {title: "The default AP password when setting up."}]
+ - ["wifi.sta.enable",            "b", true,       {title: "Enable WiFi station"}]
+ - ["platform",                   "o",             {title: "Platform config. Defines connectivity of hardware."}]
+ - ["platform.wifi_button_gpio",  "i", 0,          {title: "GPIO pin used to setup wifi (input from button)"}]
+ - ["platform.wifi_led_gpio",     "i", 2,          {title: "GPIO pin used to setup wifi (output to LED)."}]
 
- - ["platform", 					        "o", 	           {title: "Platform config. Defines connectivity of hardware."}]
- - ["platform.wifi_button_gpio", 	"i", 0,          {title: "GPIO pin used to setup wifi (input from button)"}]
- - ["platform.wifi_led_gpio", 		"i", 2,          {title: "GPIO pin used to setup wifi (output to LED)."}]
+ - ["user",                       "o",             {title: "Holds attributes that the user may configure."}]
+ - ["user.setup_mode",            "i", 1,          {title: "If true then the unit is in setup mode. This occurs after the setup button has been held down for a time and released."}]
+ - ["user.wifi_mode",             "i", 0,          {title: "The wifi mode (WIFI_MODE_AP=0 or WIFI_MODE_TERMINAL=1)."}]
 
- - ["user", 						          "o",             {title: "Holds attributes that the user may configure."}]
- - ["user.setup_mode", 				    "i", 1,          {title: "If true then the unit is in setup mode. This occurs after the setup button has been held down for a time and released."}]
- - ["user.wifi_mode", 				    "i", 0,          {title: "The wifi mode (WIFI_MODE_AP=0 or WIFI_MODE_TERMINAL=1)."}]
- - ["user.product_id", 				    "s", "PRODID",   {title: "The Y product ID."}]
-```
-
+ - ["ydev",                       "o",             {title: "Holds attributes of the Y device."}]
+ - ["ydev.product_id",            "s", "PRODID",   {title: "The Y product ID (before WiFi setup this is part of AP SSID)."}]
 ```
 #include "mgos.h"
 

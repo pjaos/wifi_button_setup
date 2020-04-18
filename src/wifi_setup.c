@@ -228,7 +228,7 @@ static void set_restart_ms(int milli_seconds) {
  * product ID and ends with the MAC address.
  **/
 static void setupModeSSID(void) {
-  const char *ssid_prefix = mgos_sys_config_get_user_product_id();
+  const char *ssid_prefix = mgos_sys_config_get_ydev_product_id();
   if( ssid_prefix == NULL ) {
     ssid_prefix="UNSETPRODUCTID";
   }
